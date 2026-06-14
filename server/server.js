@@ -23,6 +23,12 @@ app.use(express.json());
 const authRoutes = require("./routes/auth");
 app.use("/api/auth", authRoutes);
 
+const skillRoutes = require("./routes/skills");
+app.use("/api/skills", skillRoutes);
+
+const exchangeRoutes = require("./routes/exchanges");
+app.use("/api/exchanges", exchangeRoutes);
+
 // Health check route — useful to test if server is running
 app.get("/", (req, res) => {
   res.json({ message: "SkillSync API is running!" });
