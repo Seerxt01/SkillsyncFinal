@@ -456,20 +456,6 @@ skillsync/
 
 ---
 
-## 🎓 Interview Talking Points
-
-**Use these to explain your project:**
-
-1. *"I built SkillSync to learn MERN stack end-to-end"*
-2. *"It's a real full-stack app with authentication, database, and complex business logic"*
-3. *"Users can exchange skills with ratings and messaging"*
-4. *"I used MongoDB for flexibility, React for interactivity, Express for routing, Node for scalability"*
-5. *"JWT for stateless authentication"*
-6. *"Context API for global state management"*
-7. *"Protected routes to ensure only logged-in users access features"*
-8. *"Real data tracking in Analytics page"*
-9. *"Designed database schema to handle user relationships"*
-10. *"Implemented rating system with average calculation"*
 
 ---
 
@@ -477,7 +463,7 @@ skillsync/
 
 Built by **Manseerat** for TCS on-campus placement (2027 batch)
 
-**GitHub:** https://github.com/Seerxt01/Skillsync-final-
+**GitHub:** https://github.com/Seerxt01/Skillsync-final
 
 ---
 
