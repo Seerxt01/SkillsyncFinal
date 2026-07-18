@@ -10,8 +10,10 @@ const {
   updateProfile,
   getAllUsers
 } = require("../controllers/skillController");
+const { getAIMatch } = require("../controllers/matchController");
 
 router.get("/all", getAllUsers);
+router.post("/ai-match", protect, getAIMatch);
 router.get("/me", protect, getMySkills);
 router.post("/teach", protect, addSkillToTeach);
 router.delete("/teach/:skillId", protect, removeSkillToTeach);

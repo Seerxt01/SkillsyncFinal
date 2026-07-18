@@ -13,6 +13,9 @@ const FindSkills = () => {
   const [skillRequested, setSkillRequested] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [aiMatch, setAiMatch] = useState(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState("");
 
   const d = darkMode;
   const bg = d ? "#0f172a" : "#f8fafc";
@@ -80,6 +83,24 @@ const FindSkills = () => {
     );
     setFilteredUsers(filtered);
   }, [searchSkill, users]);
+
+  const getAIMatch = async (targetUser) => {
+    setSelectedUser(targetUser);
+    setAiMatch(null);
+    setAiError("");
+    setAiLoading(true);
+    try {
+      const res = await axios.post(
+        "http://localhost:5000/api/skills/ai-match",
+        { targetUserId: targetUser._id },
+        config
+      );
+      setAiMatch(res.data);
+    } catch (err) {
+      setAiError(err.response?.data?.message || "Failed to generate AI match");
+    }
+    setAiLoading(false);
+  };
 
   const sendRequest = async () => {
     if (!selectedUser || !skillOffered || !skillRequested) {
@@ -167,7 +188,7 @@ const FindSkills = () => {
             {filteredUsers.map((u) => (
               <div
                 key={u._id}
-                onClick={() => setSelectedUser(u)}
+                onClick={() => { setSelectedUser(u); setAiMatch(null); setAiError(""); }}
                 style={{
                   background: selectedUser?._id === u._id ? "#f0fdf4" : "transparent",
                   border: `1px solid ${selectedUser?._id === u._id ? "#16a34a" : border}`,
@@ -201,6 +222,20 @@ const FindSkills = () => {
                       ))}
                     </div>
                   </div>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      getAIMatch(u);
+                    }}
+                    style={{
+                      background: "#eef2ff", color: "#4f46e5",
+                      border: "1px solid #c7d2fe", borderRadius: "8px",
+                      padding: "6px 10px", fontSize: "12px", fontWeight: "600",
+                      cursor: "pointer", whiteSpace: "nowrap"
+                    }}
+                  >
+                    🤖 AI Match
+                  </button>
                 </div>
               </div>
             ))}
@@ -215,6 +250,57 @@ const FindSkills = () => {
                 <h3 style={{ fontSize: "16px", fontWeight: "600", color: text, marginBottom: "16px" }}>
                   Exchange with {selectedUser.name}
                 </h3>
+
+                {aiLoading && (
+                  <p style={{ color: subtext, fontSize: "13px", marginBottom: "16px" }}>
+                    🤖 Analyzing compatibility...
+                  </p>
+                )}
+
+                {aiError && (
+                  <p style={{ color: "#dc2626", fontSize: "13px", marginBottom: "16px" }}>
+                    ❌ {aiError}
+                  </p>
+                )}
+
+                {aiMatch && (
+                  <div style={{
+                    background: d ? "#0f172a" : "#f5f3ff",
+                    border: "1px solid #c7d2fe", borderRadius: "10px",
+                    padding: "16px", marginBottom: "20px"
+                  }}>
+                    <p style={{ fontWeight: "700", color: "#4f46e5", fontSize: "15px", marginBottom: "8px" }}>
+                      Compatibility: {aiMatch.score}%
+                    </p>
+
+                    <p style={{ fontSize: "13px", color: text, marginBottom: "10px" }}>
+                      {aiMatch.explanation}
+                    </p>
+
+                    <p style={{ fontSize: "13px", fontWeight: "600", color: text, marginBottom: "4px" }}>
+                      Why you're a great match:
+                    </p>
+                    <p style={{ fontSize: "13px", color: subtext, marginBottom: "10px" }}>
+                      {aiMatch.whyGoodMatch}
+                    </p>
+
+                    <p style={{ fontSize: "13px", fontWeight: "600", color: text, marginBottom: "4px" }}>
+                      Suggested Exchange:
+                    </p>
+                    <ul style={{ margin: "0 0 10px 18px", padding: 0, fontSize: "13px", color: subtext }}>
+                      {(aiMatch.suggestedSessions || []).map((s, i) => (
+                        <li key={i}>{s}</li>
+                      ))}
+                    </ul>
+
+                    <p style={{ fontSize: "13px", fontWeight: "600", color: text, marginBottom: "4px" }}>
+                      Ice-breaker:
+                    </p>
+                    <p style={{ fontSize: "13px", color: subtext, fontStyle: "italic" }}>
+                      "{aiMatch.iceBreaker}"
+                    </p>
+                  </div>
+                )}
 
                 <div style={{ marginBottom: "16px" }}>
                   <p style={{ fontSize: "13px", color: subtext, marginBottom: "4px" }}>
